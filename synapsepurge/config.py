@@ -31,7 +31,6 @@ class Config(object):
     _purge_max_jobs = "max_jobs"
     _purge_max_jobs_default = 5
 
-
     def __init__(self):
         self._parser = None
         self._values = {}
@@ -108,9 +107,10 @@ class Config(object):
         self._values[self._database_section][self._database_port] = \
             int(self._parser.get(self._database_section, self._database_port, fallback=self._database_port_default))
         self._values[self._purge_section][self._purge_keep_days] = \
-            int (self._parser.get(self._purge_section, self._purge_keep_days, fallback=self._purge_keep_days_default))
-        self._values[self._purge_section][self._purge_delete_local_events] =\
-            bool(self._parser.get(self._purge_section, self._purge_delete_local_events, fallback=self._purge_delete_local_events_default))
+            int(self._parser.get(self._purge_section, self._purge_keep_days, fallback=self._purge_keep_days_default))
+        self._values[self._purge_section][self._purge_delete_local_events] = \
+            bool(self._parser.get(self._purge_section, self._purge_delete_local_events,
+                                  fallback=self._purge_delete_local_events_default))
         self._values[self._purge_section][self._purge_max_jobs] = \
             int(self._parser.get(self._purge_section, self._purge_max_jobs, fallback=self._purge_max_jobs_default))
 
