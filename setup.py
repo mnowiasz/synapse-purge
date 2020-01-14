@@ -3,7 +3,7 @@ from setuptools import setup
 setup (
     name='synapse-purge',
     version='0.0.1',
-    packages='synapsepurge',
+    packages=['synapsepurge'],
     url='https://github.com/mnowiasz/synapse-purge',
     license='MIT',
     author='Mark Nowiasz',
@@ -11,9 +11,9 @@ setup (
     description='purge old room events from your homeserver',
     install_requires = [
         'matrix-nio>=0.6.0',
-        'psycog2'
+        'psycopg2'
     ],
     entry_points={
-        'console_scripts': ['purge=synapsepurge:purge'],
+        'console_scripts': ['purge=synapsepurge.purge:purge'],
     }
 )

@@ -14,14 +14,15 @@ class Config(object):
     _synapse_url = "url"
     _synapse_config_mandatory = (_synapse_username, _synapse_password, _synapse_url)
 
-    _database_section = "database"
-    _database_username = "username"
-    _database_password = "password"
-    _database_host = "host"
-    _database_port = "port"
-    _database_port_default = 5432
+    _postgresql_section = "postgresql"
+    _postgresql_username = "username"
+    _postgresql_password = "password"
+    _postgresql_database = "database"
+    _postgresql_host = "host"
+    _postgresql_port = "port"
+    _postgresql_port_default = 5432
 
-    _database_config_mandatory = (_database_username, _database_password, _database_host)
+    _postgresql_config_mandatory = (_postgresql_username, _postgresql_password, _postgresql_database, _postgresql_host)
 
     _purge_section = "purge"
     _purge_keep_days = "keep_days"
@@ -35,8 +36,8 @@ class Config(object):
         self._parser = None
         self._values = {}
         self._defaults = {
-            self._database_section: {
-                self._database_port: 5432
+            self._postgresql_section: {
+                self._postgresql_port: 5432
             },
             self._purge_section: {
                 self._purge_keep_days: 120,
@@ -95,7 +96,7 @@ class Config(object):
         if error:
             return error
 
-        error = self._read_mandatory(self._database_section, self._database_config_mandatory)
+        error = self._read_mandatory(self._postgresql_section, self._postgresql_config_mandatory)
         if error:
             return error
 
@@ -104,8 +105,8 @@ class Config(object):
 
         # Do not bother with catching ValueError - this exception is rather self-explanatory
 
-        self._values[self._database_section][self._database_port] = \
-            int(self._parser.get(self._database_section, self._database_port, fallback=self._database_port_default))
+        self._values[self._postgresql_section][self._postgresql_port] = \
+            int(self._parser.get(self._postgresql_section, self._postgresql_port, fallback=self._postgresql_port_default))
         self._values[self._purge_section][self._purge_keep_days] = \
             int(self._parser.get(self._purge_section, self._purge_keep_days, fallback=self._purge_keep_days_default))
         self._values[self._purge_section][self._purge_delete_local_events] = \
