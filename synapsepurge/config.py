@@ -31,20 +31,12 @@ class Config(object):
     _purge_delete_local_events_default = False
     _purge_max_jobs = "max_jobs"
     _purge_max_jobs_default = 5
+    _purge_wait_seconds = "wait_seconds"
+    _purge_wait_seconds_default = 1
 
     def __init__(self):
         self._parser = None
         self._values = {}
-        self._defaults = {
-            self._postgresql_section: {
-                self._postgresql_port: 5432
-            },
-            self._purge_section: {
-                self._purge_keep_days: 120,
-                self._purge_delete_local_events: False,
-                self._purge_max_jobs: 5
-            }
-        }
 
     def _read_mandatory(self, section: str, settings: list) -> str:
         """
@@ -106,7 +98,9 @@ class Config(object):
         # Do not bother with catching ValueError - this exception is rather self-explanatory
 
         self._values[self._postgresql_section][self._postgresql_port] = \
-            int(self._parser.get(self._postgresql_section, self._postgresql_port, fallback=self._postgresql_port_default))
+            int(self._parser.get(self._postgresql_section, self._postgresql_port,
+                                 fallback=self._postgresql_port_default))
+
         self._values[self._purge_section][self._purge_keep_days] = \
             int(self._parser.get(self._purge_section, self._purge_keep_days, fallback=self._purge_keep_days_default))
         self._values[self._purge_section][self._purge_delete_local_events] = \
@@ -114,5 +108,8 @@ class Config(object):
                                   fallback=self._purge_delete_local_events_default))
         self._values[self._purge_section][self._purge_max_jobs] = \
             int(self._parser.get(self._purge_section, self._purge_max_jobs, fallback=self._purge_max_jobs_default))
+        self._values[self._purge_section][self._purge_wait_seconds] = \
+            int(self._parser.get(self._purge_section, self._purge_wait_seconds,
+                                 fallback=self._purge_wait_seconds_default))
 
         return None
