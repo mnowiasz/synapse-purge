@@ -4,35 +4,37 @@ import configparser
 from pathlib import Path
 
 _config_directories = (Path.home(), Path.cwd())
-_config_filename = "purge.conf"
+_CONFIG_FILENAME = "purge.conf"
+
+SYNAPSE_SECTION = "synapse"
+SYNAPSE_USERNAME = "username"
+SYNAPSE_PASSWORD = "password"
+SYNAPSE_URL = "url"
+
+_synapse_config_mandatory = (SYNAPSE_USERNAME, SYNAPSE_PASSWORD, SYNAPSE_URL)
+
+POSTGRESQL_SECTION = "postgresql"
+POSTGRESQL_USERNAME = "username"
+POSTGRESQL_PASSWORD = "password"
+POSTGRESQL_DATABASE = "database"
+POSTGRESQL_HOST = "host"
+POSTGRESQL_PORT = "port"
+_POSTGRESQL_PORT_DEFAULT = 5432
+
+_postgresql_config_mandatory = (POSTGRESQL_USERNAME, POSTGRESQL_PASSWORD, POSTGRESQL_DATABASE, POSTGRESQL_HOST)
+
+PURGE_SECTION = "purge"
+PURGE_KEEP_DAYS = "keep_days"
+PURGE_KEEP_DAYS_DEFAULT = 120
+PURGE_DELETE_LOCAL_EVENTS = "delete_local_events"
+_PURGE_DELETE_LOCAL_EVENTS_DEFAULT = False
+PURGE_MAX_JOBS = "max_jobs"
+_PURGE_MAX_JOBS_DEFAULT = 5
+PURGE_WAIT_SECONDS = "wait_seconds"
+_PURGE_WAIT_SECONDS_DEFAULT = 1
 
 
 class Config(object):
-    _synapse_section = "synapse"
-    _synapse_username = "username"
-    _synapse_password = "password"
-    _synapse_url = "url"
-    _synapse_config_mandatory = (_synapse_username, _synapse_password, _synapse_url)
-
-    _postgresql_section = "postgresql"
-    _postgresql_username = "username"
-    _postgresql_password = "password"
-    _postgresql_database = "database"
-    _postgresql_host = "host"
-    _postgresql_port = "port"
-    _postgresql_port_default = 5432
-
-    _postgresql_config_mandatory = (_postgresql_username, _postgresql_password, _postgresql_database, _postgresql_host)
-
-    _purge_section = "purge"
-    _purge_keep_days = "keep_days"
-    _purge_keep_days_default = 120
-    _purge_delete_local_events = "delete_local_events"
-    _purge_delete_local_events_default = False
-    _purge_max_jobs = "max_jobs"
-    _purge_max_jobs_default = 5
-    _purge_wait_seconds = "wait_seconds"
-    _purge_wait_seconds_default = 1
 
     def __init__(self):
         self._parser = None
@@ -71,7 +73,7 @@ class Config(object):
 
         # Find a configfile
         for path in _config_directories:
-            configfile = (Path(path) / _config_filename).resolve()
+            configfile = (Path(path) / _CONFIG_FILENAME).resolve()
             if configfile.is_file():
                 break
         else:
@@ -84,32 +86,28 @@ class Config(object):
         self._parser.read(configfile)
 
         # First the mandatory settings
-        error = self._read_mandatory(self._synapse_section, self._synapse_config_mandatory)
+        error = self._read_mandatory(SYNAPSE_SECTION, _synapse_config_mandatory)
         if error:
             return error
 
-        error = self._read_mandatory(self._postgresql_section, self._postgresql_config_mandatory)
+        error = self._read_mandatory(POSTGRESQL_SECTION, _postgresql_config_mandatory)
         if error:
             return error
 
         # Now the optional settings
-        self._values[self._purge_section] = {}
+        self._values[PURGE_SECTION] = {}
 
         # Do not bother with catching ValueError - this exception is rather self-explanatory
 
-        self._values[self._postgresql_section][self._postgresql_port] = \
-            int(self._parser.get(self._postgresql_section, self._postgresql_port,
-                                 fallback=self._postgresql_port_default))
+        self._values[POSTGRESQL_SECTION][POSTGRESQL_PORT] = int(self._parser.get(POSTGRESQL_SECTION, POSTGRESQL_PORT, fallback=_POSTGRESQL_PORT_DEFAULT))
 
-        self._values[self._purge_section][self._purge_keep_days] = \
-            int(self._parser.get(self._purge_section, self._purge_keep_days, fallback=self._purge_keep_days_default))
-        self._values[self._purge_section][self._purge_delete_local_events] = \
-            bool(self._parser.get(self._purge_section, self._purge_delete_local_events,
-                                  fallback=self._purge_delete_local_events_default))
-        self._values[self._purge_section][self._purge_max_jobs] = \
-            int(self._parser.get(self._purge_section, self._purge_max_jobs, fallback=self._purge_max_jobs_default))
-        self._values[self._purge_section][self._purge_wait_seconds] = \
-            int(self._parser.get(self._purge_section, self._purge_wait_seconds,
-                                 fallback=self._purge_wait_seconds_default))
+        self._values[PURGE_SECTION][PURGE_KEEP_DAYS] =  int(self._parser.get(PURGE_SECTION, PURGE_KEEP_DAYS, fallback=PURGE_KEEP_DAYS_DEFAULT))
+        self._values[PURGE_SECTION][PURGE_DELETE_LOCAL_EVENTS] = bool(self._parser.get(PURGE_SECTION, PURGE_DELETE_LOCAL_EVENTS, fallback=_PURGE_DELETE_LOCAL_EVENTS_DEFAULT))
+        self._values[PURGE_SECTION][PURGE_MAX_JOBS] = int(self._parser.get(PURGE_SECTION, PURGE_MAX_JOBS, fallback=_PURGE_MAX_JOBS_DEFAULT))
+        self._values[PURGE_SECTION][PURGE_WAIT_SECONDS] = int(self._parser.get(PURGE_SECTION, PURGE_WAIT_SECONDS, fallback=_PURGE_WAIT_SECONDS_DEFAULT))
 
         return None
+
+    @property
+    def values(self):
+        return self._values
