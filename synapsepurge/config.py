@@ -10,7 +10,8 @@ SYNAPSE_SECTION = "synapse"
 SYNAPSE_USERNAME = "username"
 SYNAPSE_PASSWORD = "password"
 SYNAPSE_URL = "url"
-
+SYNAPSE_DEVICE_NAME = "device_name"
+_SYNAPSE_DEVICE_NAME_DEFAULT = "python/synapse-purge"
 _synapse_config_mandatory = (SYNAPSE_USERNAME, SYNAPSE_PASSWORD, SYNAPSE_URL)
 
 POSTGRESQL_SECTION = "postgresql"
@@ -99,12 +100,20 @@ class Config(object):
 
         # Do not bother with catching ValueError - this exception is rather self-explanatory
 
-        self._values[POSTGRESQL_SECTION][POSTGRESQL_PORT] = int(self._parser.get(POSTGRESQL_SECTION, POSTGRESQL_PORT, fallback=_POSTGRESQL_PORT_DEFAULT))
+        self._values[SYNAPSE_SECTION][SYNAPSE_DEVICE_NAME] = self._parser.get(SYNAPSE_SECTION, SYNAPSE_DEVICE_NAME,
+                                                                              fallback=_SYNAPSE_DEVICE_NAME_DEFAULT)
 
-        self._values[PURGE_SECTION][PURGE_KEEP_DAYS] =  int(self._parser.get(PURGE_SECTION, PURGE_KEEP_DAYS, fallback=PURGE_KEEP_DAYS_DEFAULT))
-        self._values[PURGE_SECTION][PURGE_DELETE_LOCAL_EVENTS] = bool(self._parser.get(PURGE_SECTION, PURGE_DELETE_LOCAL_EVENTS, fallback=_PURGE_DELETE_LOCAL_EVENTS_DEFAULT))
-        self._values[PURGE_SECTION][PURGE_MAX_JOBS] = int(self._parser.get(PURGE_SECTION, PURGE_MAX_JOBS, fallback=_PURGE_MAX_JOBS_DEFAULT))
-        self._values[PURGE_SECTION][PURGE_WAIT_SECONDS] = int(self._parser.get(PURGE_SECTION, PURGE_WAIT_SECONDS, fallback=_PURGE_WAIT_SECONDS_DEFAULT))
+        self._values[POSTGRESQL_SECTION][POSTGRESQL_PORT] = int(
+            self._parser.get(POSTGRESQL_SECTION, POSTGRESQL_PORT, fallback=_POSTGRESQL_PORT_DEFAULT))
+
+        self._values[PURGE_SECTION][PURGE_KEEP_DAYS] = int(
+            self._parser.get(PURGE_SECTION, PURGE_KEEP_DAYS, fallback=PURGE_KEEP_DAYS_DEFAULT))
+        self._values[PURGE_SECTION][PURGE_DELETE_LOCAL_EVENTS] = bool(
+            self._parser.get(PURGE_SECTION, PURGE_DELETE_LOCAL_EVENTS, fallback=_PURGE_DELETE_LOCAL_EVENTS_DEFAULT))
+        self._values[PURGE_SECTION][PURGE_MAX_JOBS] = int(
+            self._parser.get(PURGE_SECTION, PURGE_MAX_JOBS, fallback=_PURGE_MAX_JOBS_DEFAULT))
+        self._values[PURGE_SECTION][PURGE_WAIT_SECONDS] = int(
+            self._parser.get(PURGE_SECTION, PURGE_WAIT_SECONDS, fallback=_PURGE_WAIT_SECONDS_DEFAULT))
 
         return None
 

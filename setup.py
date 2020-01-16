@@ -14,6 +14,6 @@ setup (
         'psycopg2'
     ],
     entry_points={
-        'console_scripts': ['purge=synapsepurge.purge:purge'],
+        'console_scripts': ['purge=synapsepurge.purge:main'],
     }
 )
