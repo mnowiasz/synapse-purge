@@ -115,6 +115,15 @@ class Config(object):
         self._values[PURGE_SECTION][PURGE_WAIT_SECONDS] = int(
             self._parser.get(PURGE_SECTION, PURGE_WAIT_SECONDS, fallback=_PURGE_WAIT_SECONDS_DEFAULT))
 
+        # Some sanity checks
+
+        if self._values[PURGE_SECTION][PURGE_KEEP_DAYS] <= 30:
+            return "Illegal value for {}".format(PURGE_KEEP_DAYS)
+        if self._values[PURGE_SECTION][PURGE_MAX_JOBS] <= 0:
+            return "Illegal value for {}".format(PURGE_MAX_JOBS)
+        if self._values[PURGE_SECTION][PURGE_WAIT_SECONDS] <= 0:
+            return "Illegal value for {}".format(PURGE_WAIT_SECONDS)
+
         return None
 
     @property
