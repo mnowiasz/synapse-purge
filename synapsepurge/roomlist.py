@@ -15,7 +15,7 @@ def get_rooms(the_config: config.Config):
 
     my_cursor = my_connection.cursor()
 
-    my_cursor.execute("SELECT room_id from rooms limit 20")
+    my_cursor.execute("SELECT room_id from rooms")
 
     result = my_cursor.fetchall()
     my_cursor.close()
