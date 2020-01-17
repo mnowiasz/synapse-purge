@@ -1,5 +1,6 @@
 """ The main file """
 import asyncio
+import time
 from random import randint
 
 from nio import AsyncClient, responses
@@ -8,21 +9,31 @@ from synapsepurge import config, roomlist
 
 async def purge(my_config: config.Config, client: AsyncClient, rooms: tuple):
 
-    response = await client.login(password=my_config.values[config.SYNAPSE_SECTION][config.SYNAPSE_PASSWORD], device_name=my_config.values[config.SYNAPSE_SECTION][config.SYNAPSE_DEVICE_NAME])
+    purge_config = my_config.values[config.PURGE_SECTION]
+    synapse_config = my_config.values[config.SYNAPSE_SECTION]
+
+    now = int(time.time())
+
+    # The API expects milliseconds
+    ts_to_purge = (now - (purge_config[config.PURGE_KEEP_DAYS] * 60 * 60 *24)) * 1000
+
+    response = await client.login(password=synapse_config[config.SYNAPSE_PASSWORD], device_name=synapse_config[config.SYNAPSE_DEVICE_NAME])
     if isinstance(response, responses.LoginError):
         print("Unable to login: {}".format(response.message))
         await client.close()
         return
 
-    semaphore = asyncio.Semaphore(my_config.values[config.PURGE_SECTION][config.PURGE_MAX_JOBS])
+    semaphore = asyncio.Semaphore(purge_config[config.PURGE_MAX_JOBS])
 
     async def purge_worker(room: str):
         async with semaphore:
-            wait_time = randint(1,3)
+            start_time = time.time_ns()
+            wait_time = randint(1,10)
             await asyncio.sleep(wait_time)
-            print("Room: {} done".format(room))
+            end_time = time.time_ns()
+            print("Room: {} finished: {} seconds".format(room, (end_time - start_time) / 1e9))
 
-    tasks = [ asyncio.ensure_future(purge_worker(room)) for room in rooms]
+    tasks = [ asyncio.ensure_future(purge_worker(room[0])) for room in rooms]
 
     await asyncio.gather(*tasks)
 
