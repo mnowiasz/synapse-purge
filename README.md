@@ -1,7 +1,7 @@
 # synapse-purge
 Purge old room events from your homeserver
 
-This is basically the python version of  https://github.com/djmaze/synapse-purge ,
+This is basically the python version of  https://github.com/djmaze/synapse-purge,
 which stopped working for me (after a ruby upgrade or two). I tried to fix it,
 but since by ruby skills are non-existent I found it easier to reimplement the functionality
 in python. It's also a nice exercise in python, especially in async/aio. 
@@ -9,22 +9,22 @@ in python. It's also a nice exercise in python, especially in async/aio.
 ## What it does
 It fetches the list of rooms on your homeserver and sends - via the purge 
 history API (https://github.com/matrix-org/synapse/blob/master/docs/admin_api/purge_history_api.rst)
-purge requests, so old - by default remote -messages (for example, older than 120 days) 
+purge requests, so old -by default remote- messages (for example, older than 120 days) 
 are deleted. After that, it waits for the operation to finished.
 
 Since this might be an expensive operation taking time, this is done asynchronously,
-sending (per default 5) a number of parellel requests at the same time. Depending on your homeserver,
-you might want to increaser or decrease the number of workers.
+sending a number of parallel requests (by default 5) at the same time. Depending on your homeserver,
+you might want to increase or decrease the number of workers.
 
 You can do this on a daily basis, say by cron or systemd-timer, however, to
-reclaim file system space you need to ocassionally VACUUM FULL.
+reclaim file system space you need to occasionally VACUUM FULL on the database
 
-## Prerequisetes
+## Prerequisites
 You need:
 * access to synapse's database (postgresql only)
 * an admin account on the homeserver
 * Since the program uses the new API (_snapse/admin) you may have to configure
-your reverse proxy to proxy _synapse to the homeserver
+your reverse proxy to proxy _synapse requests to the homeserver
 
 
 ## Installation
