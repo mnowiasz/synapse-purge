@@ -34,16 +34,9 @@ async def purge(my_config: config.Config, client: AsyncClient, rooms: tuple):
             start_time = time.time_ns()
             wait_time = purge_config[config.PURGE_WAIT_SECONDS]
             return_string = "OK"
-
+            content = { "purge_up_to_ts": ts_to_purge }
             if purge_config[config.PURGE_DELETE_LOCAL_EVENTS]:
-                content = {
-                    "purge_up_to_ts": ts_to_purge,
-                    "delete_local_events": True,
-                }
-            else:
-                content = {
-                    "purge_up_to_ts": ts_to_purge,
-                }
+                content["delete_local_events"] = True
 
             headers = {"Content-type": "application/json",
                        "Authorization": "Bearer {}".format(client.access_token)}
