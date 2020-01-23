@@ -6,9 +6,13 @@ which stopped working for me (after a ruby upgrade or two). I tried to fix it,
 but since by ruby skills are non-existent I found it easier to reimplement the functionality
 in python. It's also a nice exercise in python, especially in async/aio. 
 
+## Note
+This is probably obsolete, because from synapse 1.9.0, there's a more versatile functionality build in, so 
+if you use synapse >=1.9.0, you might want consider using [Message retention policies](https://github.com/matrix-org/synapse/blob/master/docs/message_retention_policies.md)
+
 ## What it does
-It fetches the list of rooms on your homeserver and sends - via the purge 
-history API (https://github.com/matrix-org/synapse/blob/master/docs/admin_api/purge_history_api.rst)
+It fetches the list of rooms on your homeserver and sends - via the [purge 
+history API](https://github.com/matrix-org/synapse/blob/master/docs/admin_api/purge_history_api.rst)
 purge requests, so old -by default remote- messages (for example, older than 120 days) 
 are deleted. After that, it waits for the operation to finished.
 
